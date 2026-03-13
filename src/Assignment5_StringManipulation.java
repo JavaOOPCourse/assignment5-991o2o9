@@ -194,30 +194,28 @@ public class Assignment5_StringManipulation {
         // TODO: Найти символ, который встречается чаще всего
         char mostFrequent = ' ';
         int maxCount = 0;
-
-        Set<Character> uniqueChar = new HashSet<>();
+        Map<Character, Integer> counts = new HashMap<>();
 
         for (char ch : input.toCharArray()){
-            if (ch != ' '){
-                uniqueChar.add(ch);
+            if (ch == ' '){
+                continue;
+            }
+            if(counts.containsKey(ch)){
+                int currentCount = counts.get(ch);
+                counts.put(ch, currentCount + 1);
+            } else {
+                counts.put(ch , 1);
             }
         }
 
-        for (char u: uniqueChar){
-            int currentCount = 0;
-
-            for (char ch : input.toCharArray()){
-                if (ch == u){
-                    currentCount++;
-                }
-            }
-            if (currentCount > maxCount){
-                maxCount = currentCount;
-                mostFrequent = u;
+        for (Map.Entry<Character, Integer> entry: counts.entrySet()){
+            if (entry.getValue() > maxCount){
+                maxCount = entry.getValue();
+                mostFrequent = entry.getKey();
             }
         }
 
-        System.out.println("The most frequent character is: " + mostFrequent + " (" + maxCount + "-times" + ")");
+        System.out.println("The most frequent character is: " + mostFrequent + " (" + maxCount + " times)");
     }
 
     // ===================== TASK 8 =====================
@@ -228,20 +226,30 @@ public class Assignment5_StringManipulation {
         String str2 = scanner.nextLine().trim().toLowerCase();
 
         // TODO: Проверить, являются ли две строки анаграммами (игнорировать пробелы и регистр)
-        boolean areAnagrams = false;
+        boolean areAnagrams = true;
 
         if (str1.length()!=str2.length()){
-            System.out.println("Not anagrams");
-            return;
+            areAnagrams = false;
         }
+        else {
+            Map<Character, Integer> charCount = new HashMap<>();
+            for (char ch : str1.toCharArray()){
+                if (charCount.containsKey(ch)){
+                    charCount.put(ch, charCount.get(ch) + 1);
+                }
+                else {
+                    charCount.put(ch,1);
+                }
+            }
 
-        char[] array1 = str1.toCharArray();
-        char[] array2 = str2.toCharArray();
-        Arrays.sort(array1);
-        Arrays.sort(array2);
-
-        areAnagrams = Arrays.equals(array1,array2);
-
+            for (char ch : str2.toCharArray()){
+                if (!charCount.containsKey(ch) || charCount.get(ch) == 0){
+                    areAnagrams = false;
+                    break;
+                }
+                charCount.put(ch,charCount.get(ch) - 1);
+            }
+        }
         System.out.println(areAnagrams ? "Yes" : "No");
     }
 }
